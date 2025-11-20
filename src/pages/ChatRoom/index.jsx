@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useChat } from '../../context/ChatContext'
 import MessagesList from '../../components/chat/MessagesList'
-import InputBox from '../../components/chat/InputBox'
+import InputBox from '../../components/Chat/InputBox'
 import { sendMessageToAI } from '../../services/groqApi'
 import './index.css'
 
