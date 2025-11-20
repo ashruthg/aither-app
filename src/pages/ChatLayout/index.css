@@ -1,0 +1,18 @@
+.chat-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #0f0f0f;
+  /* border: 1px solid red; */
+}
+
+.chat-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chat-content {
+  flex: 1;
+  overflow: hidden;
+}
