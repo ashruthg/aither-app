@@ -3,38 +3,34 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = process.env.GROQ_API_KEY;
-
     console.log("SERVER: apiKey exists?", !!apiKey);
 
     if (!apiKey) {
-      console.log("SERVER: Missing key");
       return res.status(500).json({ error: "API key missing on server" });
     }
 
-    // ----------------------------
-    // 1. Log RAW body
-    // ----------------------------
-    console.log("SERVER: raw req.body =", req.body);
+    let body = req.body;
 
-    let body;
-    try {
-      body = JSON.parse(req.body);
-      console.log("SERVER: parsed body =", body);
-    } catch (err) {
-      console.log("SERVER: JSON parse error", err);
-      return res.status(400).json({ error: "Invalid JSON body" });
+    // If body is a string, parse it
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch (err) {
+        console.log("SERVER: JSON parse error", err);
+        return res.status(400).json({ error: "Invalid JSON body" });
+      }
     }
+
+    // Log parsed body
+    console.log("SERVER: parsed body =", body);
 
     const { messages } = body;
 
-    if (!messages) {
-      console.log("SERVER: messages missing");
+    if (!messages || !Array.isArray(messages)) {
+      console.log("SERVER: No messages array found");
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    // ----------------------------
-    // 2. Call Groq API
-    // ----------------------------
     const groqResponse = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -52,13 +48,10 @@ export default async function handler(req, res) {
       }
     );
 
-    console.log("SERVER: groqResponse.status =", groqResponse.status);
-
     const data = await groqResponse.json();
     console.log("SERVER: Groq data =", data);
 
     return res.status(200).json(data);
-
   } catch (err) {
     console.log("SERVER ERROR:", err);
     return res.status(500).json({ error: err.message });
